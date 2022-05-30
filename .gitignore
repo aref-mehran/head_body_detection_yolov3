@@ -1,0 +1,9 @@
+weights/yolov3-tiny.pt
+*.pt
+*.onnx
+*.weights
+*.pyc
+weights/darknet53.conv.74
+weights/yolov3-tiny.conv.15
+output
+*.mp4
