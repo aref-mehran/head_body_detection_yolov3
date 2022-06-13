@@ -6,7 +6,7 @@ from utils.datasets import *
 from utils.utils import *
 
 
-def detect(save_img=False):
+def detect(opt, save_img=False):
     img_size = (320, 192) if ONNX_EXPORT else opt.img_size  # (320, 192) or (416, 256) or (608, 352) for (height, width)
     out, source, weights, half, view_img, save_txt = opt.output, opt.source, opt.weights, opt.half, opt.view_img, opt.save_txt
     webcam = source == '0' or source.startswith('rtsp') or source.startswith('http') or source.endswith('.txt')
@@ -172,9 +172,10 @@ def detect(save_img=False):
             os.system('open ' + save_path)
 
     print('Done. (%.3fs)' % (time.time() - t0))
+    return ('Done. (%.3fs)' % (time.time() - t0))
 
 
-if __name__ == '__main__':
+def get_opt():
     parser = argparse.ArgumentParser()
     parser.add_argument('--cfg', type=str, default='cfg/yolov3-spp.cfg', help='*.cfg path')
     parser.add_argument('--names', type=str, default='/home/allen/Desktop/yolo/YOLO_V3_TRAIN/yolov3/data/humanface.names', help='*.names path')
@@ -193,7 +194,12 @@ if __name__ == '__main__':
     parser.add_argument('--agnostic-nms', action='store_true', help='class-agnostic NMS')
     parser.add_argument('--augment', action='store_true', help='augmented inference')
     opt = parser.parse_args()
+    return opt
+
+
+if __name__ == '__main__':
+    opt = get_opt()
     print(opt)
 
     with torch.no_grad():
-        detect()
+        detect(opt)
