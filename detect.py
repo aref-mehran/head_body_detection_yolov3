@@ -68,7 +68,9 @@ else:  # darknet format
     load_darknet_weights(model, weights)
 
 
-def detect(save_img=False):
+def detect(tempFileName, save_img=False):
+    if (tempFileName):
+        opt.source = tempFileName
     global model, half, out, source, weights, half, view_img, save_txt, webcam, source, img_size, device
     # Second-stage classifier
     classify = False
