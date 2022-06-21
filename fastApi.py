@@ -6,20 +6,12 @@ import torch
 app = FastAPI()
 
 
-@app.get("/")
-async def root():
-
-   with torch.no_grad():
-       result = detect()
-       return {"message1": result}
-
-
-@app.post("/inference")
+@app.post("/")
 async def upload(file: UploadFile = File(...)):
     try:
         tempFileName = './temp.jpg'
         contents = await file.read()
-        with open('./temp.jpg', 'wb') as f:
+        with open(tempFileName, 'wb') as f:
             f.write(contents)
         with torch.no_grad():
             result = detect(tempFileName)
