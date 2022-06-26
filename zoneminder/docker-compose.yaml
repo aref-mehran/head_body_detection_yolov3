@@ -31,6 +31,7 @@ services:
             - ./cctv.mkv:/home/cctv.mkv
         environment:
             - INPUT=/home/cctv.mkv
+            - RTSP_RESOLUTION=640x360
         ports:
             - 8554:8554
 volumes:
