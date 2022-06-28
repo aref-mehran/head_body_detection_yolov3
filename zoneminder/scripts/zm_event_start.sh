@@ -32,6 +32,8 @@ REASON="$4"
 # use arrays instead of strings to avoid quote hell
 DETECTION_SCRIPT=(/var/lib/zmeventnotification/bin/zm_detect.py --monitorid $2 --eventid $1 --config "${CONFIG_FILE}" --eventpath "${EVENT_PATH}" --reason "${REASON}"  )
 
+echo $EVENT_PATH > /dev/shm/mm.txt
+
 RESULTS=$("${DETECTION_SCRIPT[@]}" | grep "detected:")
 
 _RETVAL=1

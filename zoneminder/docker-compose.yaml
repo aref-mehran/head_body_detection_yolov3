@@ -25,6 +25,7 @@ services:
             - config:/config:rw
             - data:/var/cache/zoneminder:rw
             - ./scripts/zm_event_start.sh:/config/hook/zm_event_start.sh
+            - ./scripts/zm_detect.py:/config/hook/zm_detect.py
 
 
     rtsp_emulator:
