@@ -1,5 +1,12 @@
 version: '3.1'
 services:
+    camera_ui:
+    
+        tty: true
+
+        image: node_camera_ui
+        ports:
+            - 9091:8081
     zoneminder:
         container_name: zoneminder
         image: dlandon/zoneminder.machine.learning:latest
