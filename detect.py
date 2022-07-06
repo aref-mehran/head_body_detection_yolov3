@@ -69,9 +69,11 @@ else:  # darknet format
 
 
 def detect(tempFileName, save_img=False):
+    global model, half, out, source, weights, half, view_img, save_txt, webcam, img_size, device
+
+    pred_results = ""
     if (tempFileName):
-        opt.source = tempFileName
-    global model, half, out, source, weights, half, view_img, save_txt, webcam, source, img_size, device
+        source = tempFileName
     # Second-stage classifier
     classify = False
     if classify:
@@ -188,6 +190,7 @@ def detect(tempFileName, save_img=False):
 
             # Print time (inference + NMS)
             print('%sDone. (%.3fs)' % (s, t2 - t1))
+            pred_results = '%sDone. (%.3fs)' % (s, t2 - t1)
 
             # Stream results
             if view_img:
@@ -217,7 +220,7 @@ def detect(tempFileName, save_img=False):
             os.system('open ' + save_path)
 
     print('Done. (%.3fs)' % (time.time() - t0))
-    return ('Done. (%.3fs)' % (time.time() - t0))
+    return pred_results
 
 
 if __name__ == '__main__':
