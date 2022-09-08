@@ -1,0 +1,12 @@
+version: '3.1'
+services:
+    head-body-det:
+        image: mehran69/crowd-human-head-body
+        container_name: head-body-det
+        working_dir: /home/head_body_detection_yolov3/
+        entrypoint: /home/head_body_detection_yolov3/init.sh
+        ports:
+        - 8000:8000
+        volumes:
+        - ./src/:/home/head_body_detection_yolov3/
+        tty: true
