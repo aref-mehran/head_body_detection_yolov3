@@ -74,7 +74,8 @@ def extractPolygon(polygon,img):
     if bottomright[0]<0 :
         bottomright[0]=0;
 
-    cropped=out_translate[topleft[1]:topleft[0],bottomright[1]:bottomright[0]];
+    print(topleft,bottomright);
+    cropped=out_translate[topleft[1]:bottomright[1],topleft[0]:bottomright[0]];
     # Show image, wait for user input, then save the image
     cv2.imwrite('output.png',  cv2.cvtColor(cropped, cv2.COLOR_RGB2BGR));
     return cropped;
