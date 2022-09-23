@@ -1,6 +1,6 @@
 from detect import detect
 from fastapi import FastAPI, File, UploadFile
-
+import json
 import torch
 
 # Import relevant modules
@@ -10,7 +10,9 @@ import cv2
 def extractPolygon(polygon,img):
     # Define points
     pts = np.array([[542, 107], [562, 102], [582, 110], [598, 142], [600, 192], [601, 225], [592, 261], [572, 263], [551, 245], [526, 220], [520, 188], [518, 152], [525, 127], [524, 107]], dtype=np.int32)
-
+    pts = np.array(polygon);
+    print('---------')
+    print(polygon)
     ### Define image here
     img = 255*np.ones((300, 700, 3), dtype=np.uint8)
 
@@ -62,33 +64,41 @@ app = FastAPI()
 def get_person_count(imageBuffer):
     try:
         tempFileName = './temp.jpg'
-        with open(tempFileName, 'wb') as f:
+        with open(tempFileName, 'w+') as f:
             f.write(imageBuffer)
         with torch.no_grad():
             result = detect(tempFileName)
             return {"message1": result}
-    except Exception :
+    except Exception as e:
+        print(e);
         return {"message":"there was an error in person detection"};
 
 @app.post("/")
-async def upload(file: UploadFile = File(...),polygons=[]):
+async def upload(file: UploadFile ,args:list):
+    print(args)
+    polygons=json.loads(args[0]);
+    print('....................');
     try:
+        imageBuffer = await file.read();
         if len(polygons)==0 :
-            imageBuffer = await file.read();
             message=get_person_count(imageBuffer);
             return message;
         else:
             messages=[];
             for polygon in polygons:
-                img=extractPolygon(polygon,imageBuffer);
-                message=get_person_count(img);
+                extractPolygon(polygon['coords'],imageBuffer);
+                regionImg='';
+                with open("output.png", mode='rb') as regionFile: 
+                    regionImg = regionFile.read()
+                message=get_person_count(regionImg);
                 messages.append(message);
             return messages;
         
 
 
 
-    except Exception:
+    except Exception as e:
+        print(e);
         return {"message": "There was an error uploading the file"}
     finally:
         await file.close()
