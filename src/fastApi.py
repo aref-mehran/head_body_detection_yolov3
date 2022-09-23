@@ -6,15 +6,25 @@ import torch
 # Import relevant modules
 import numpy as np
 import cv2
+from PIL import Image
+import io
 
 def extractPolygon(polygon,img):
+    print(img.shape)
     # Define points
-    pts = np.array([[542, 107], [562, 102], [582, 110], [598, 142], [600, 192], [601, 225], [592, 261], [572, 263], [551, 245], [526, 220], [520, 188], [518, 152], [525, 127], [524, 107]], dtype=np.int32)
     pts = np.array(polygon);
+    for pt in pts:
+        pt[0]=pt[0]*img.shape[1]/100;
+        pt[1]=pt[1]*img.shape[0]/100;
+
     print('---------')
     print(polygon)
+    print(pts)
+
     ### Define image here
-    img = 255*np.ones((300, 700, 3), dtype=np.uint8)
+    # img = 255*np.ones((300, 700, 3), dtype=np.uint8)
+    # img=np.asarray(image)
+
 
     # Initialize mask
     mask = np.zeros((img.shape[0], img.shape[1]))
@@ -64,7 +74,7 @@ app = FastAPI()
 def get_person_count(imageBuffer):
     try:
         tempFileName = './temp.jpg'
-        with open(tempFileName, 'w+') as f:
+        with open(tempFileName, 'wb') as f:
             f.write(imageBuffer)
         with torch.no_grad():
             result = detect(tempFileName)
@@ -86,10 +96,12 @@ async def upload(file: UploadFile ,args:list):
         else:
             messages=[];
             for polygon in polygons:
-                extractPolygon(polygon['coords'],imageBuffer);
+                img=Image.open(io.BytesIO(imageBuffer));
+                npImage=np.asarray(img)
+                extractPolygon(polygon['coords'],npImage);
                 regionImg='';
                 with open("output.png", mode='rb') as regionFile: 
-                    regionImg = regionFile.read()
+                    regionImg =  regionFile.read()
                 message=get_person_count(regionImg);
                 messages.append(message);
             return messages;
