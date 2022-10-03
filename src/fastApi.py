@@ -89,7 +89,18 @@ def get_person_count(imageBuffer):
         with open(tempFileName, 'wb') as f:
             f.write(imageBuffer)
         with torch.no_grad():
-            result = detect(tempFileName)
+            img = cv2.imread(tempFileName)
+            height, width, channels = img.shape
+            biggerDim=height
+            if(height < width):
+                biggerDim=width    
+
+
+            img_size=512
+            if(biggerDim < img_size*1.5  ):
+                img_size=(int)(img_size/2)
+            print('img_size ........................',img_size,biggerDim)
+            result = detect(tempFileName,img_size)
             return {"message1": result}
     except Exception as e:
         print(e);

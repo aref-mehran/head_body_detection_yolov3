@@ -68,8 +68,9 @@ else:  # darknet format
     load_darknet_weights(model, weights)
 
 
-def detect(tempFileName, save_img=False):
-    global model, half, out, source, weights, half, view_img, save_txt, webcam, img_size, device
+def detect(tempFileName,img_size, save_img=False):
+    global model, half, out, source, weights, half, view_img, save_txt, webcam, device
+
 
     pred_results = ""
     if (tempFileName):
