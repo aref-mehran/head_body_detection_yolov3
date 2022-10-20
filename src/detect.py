@@ -175,9 +175,11 @@ def detect(tempFileName,img_size, save_img=False):
                     n = (det[:, -1] == c).sum()  # detections per class
                     s += '%g %ss, ' % (n, names[int(c)])  # add to string
 
+                s+='\n'
                 # Write results
                 for *xyxy, conf, cls in det:
                     print(('%g ' * 6 + '\n') % (*xyxy, cls, conf))
+                    s +=('%g ' * 6 + '\ndet=') % (*xyxy, cls, conf)
                     if save_txt:  # Write to file
                         with open(save_path + '.txt', 'a') as file:
                             file.write(('%g ' * 6 + '\n') % (*xyxy, cls, conf))

@@ -8,7 +8,6 @@ import numpy as np
 import cv2
 from PIL import Image
 import io
-
 def extractPolygon(polygon,img):
     print(img.shape)
     # Define points
