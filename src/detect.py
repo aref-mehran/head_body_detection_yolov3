@@ -5,7 +5,6 @@ from models import *  # set ONNX_EXPORT in models.py
 from utils.datasets import *
 from utils.utils import *
 
-
 parser = argparse.ArgumentParser()
 parser.add_argument('--cfg', type=str,
                     default='cfg/yolov3-spp.cfg', help='*.cfg path')
@@ -72,7 +71,7 @@ def detect(tempFileName,img_size, save_img=False):
     global model, half, out, source, weights, half, view_img, save_txt, webcam, device
 
 
-    pred_results = ""
+    pred_results = {}
     if (tempFileName):
         source = tempFileName
     # Second-stage classifier
@@ -157,6 +156,7 @@ def detect(tempFileName,img_size, save_img=False):
         if classify:
             pred = apply_classifier(pred, modelc, img, im0s)
 
+
         # Process detections
         for i, det in enumerate(pred):  # detections per image
             if webcam:  # batch_size >= 1
@@ -166,6 +166,7 @@ def detect(tempFileName,img_size, save_img=False):
 
             save_path = str(Path(out) / Path(p).name)
             s += '%gx%g ' % img.shape[2:]  # print string
+            pred_results['imageShape']=list(img.shape[2:])
             if det is not None and len(det):
                 # Rescale boxes from img_size to im0 size
                 det[:, :4] = scale_coords(img.shape[2:], det[:, :4], im0.shape).round()
@@ -174,12 +175,18 @@ def detect(tempFileName,img_size, save_img=False):
                 for c in det[:, -1].unique():
                     n = (det[:, -1] == c).sum()  # detections per class
                     s += '%g %ss, ' % (n, names[int(c)])  # add to string
+                    pred_results[names[int(c)]]=int(n)
 
                 s+='\n'
                 # Write results
+                pred_results['pred']=[];
                 for *xyxy, conf, cls in det:
                     print(('%g ' * 6 + '\n') % (*xyxy, cls, conf))
                     s +=('%g ' * 6 + '\ndet=') % (*xyxy, cls, conf)
+                    arr=[];
+                    for x in xyxy:
+                        arr.append(int(x))
+                    pred_results['pred'].append([arr, names[int(cls)], float(conf)])
                     if save_txt:  # Write to file
                         with open(save_path + '.txt', 'a') as file:
                             file.write(('%g ' * 6 + '\n') % (*xyxy, cls, conf))
@@ -193,7 +200,7 @@ def detect(tempFileName,img_size, save_img=False):
 
             # Print time (inference + NMS)
             print('%sDone. (%.3fs)' % (s, t2 - t1))
-            pred_results = '%sDone. (%.3fs)' % (s, t2 - t1)
+            pred_results['dur']=t2 - t1
 
             # Stream results
             if view_img:
@@ -223,6 +230,7 @@ def detect(tempFileName,img_size, save_img=False):
             os.system('open ' + save_path)
 
     print('Done. (%.3fs)' % (time.time() - t0))
+    print('________________________________________ ',pred_results)
     return pred_results
 
 

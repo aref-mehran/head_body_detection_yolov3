@@ -11,3 +11,14 @@ services:
         volumes:
         - ./src/:/home/head_body_detection_yolov3/
         tty: true
+    postgres: 
+        image: postgres
+        container_name: postgres_container
+        volumes:
+        - ./data:/var/lib/postgresql/data
+        ports:
+        -  5432:5432
+        environment:
+            - POSTGRES_USER=user
+            - POSTGRES_PASSWORD=pass
+

@@ -100,7 +100,7 @@ def get_person_count(imageBuffer):
                 img_size=(int)(img_size/2)
             print('img_size ........................',img_size,biggerDim)
             result = detect(tempFileName,img_size)
-            return {"message1": result}
+            return result
     except Exception as e:
         print(e);
         return {"message":"there was an error in person detection"};
@@ -111,12 +111,13 @@ async def upload(file: UploadFile ,args:list):
     polygons=json.loads(args[0]);
     print('....................');
     try:
+        messages=[];
         imageBuffer = await file.read();
         if len(polygons)==0 :
             message=get_person_count(imageBuffer);
-            return message;
+            message['region']='wholeImage';
+            messages.append(message);
         else:
-            messages=[];
             for polygon in polygons:
                 img=Image.open(io.BytesIO(imageBuffer));
                 npImage=np.asarray(img)
@@ -125,11 +126,11 @@ async def upload(file: UploadFile ,args:list):
                 with open("output.png", mode='rb') as regionFile: 
                     regionImg =  regionFile.read()
                 message=get_person_count(regionImg);
+                message['region']=polygon['name'];
                 messages.append(message);
-            return messages;
         
 
-
+        return json.dumps(messages)
 
     except Exception as e:
         print(e);
